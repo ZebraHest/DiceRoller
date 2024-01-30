@@ -14,15 +14,16 @@ class Dice:
         return self.value
 
 
-class Player:
+class PlayerData:
     def __init__(self, name):
         self.name = name
-        self.score = ScoreSheet()
+        self.score_sheet = ScoreSheet()
+        self.score = 0
         self.dices = [Dice(), Dice(), Dice(), Dice(), Dice(), Dice()]
         self.sort_dice()
 
     def __repr__(self):
-        return f"[{self.name}, {self.score.get_score()}, {self.dices}]"
+        return f"[{self.name}, {self.get_score()}, {self.dices}]"
 
     def roll(self):
         for d in self.dices:
@@ -32,14 +33,20 @@ class Player:
 
     def print(self):
         print("Player", self.name)
-        print("Score", self.score)
+        print("Score", self.score_sheet)
         print(self.dices)
 
     def sort_dice(self):
         self.dices = sorted(self.dices, key=lambda dice: dice.value)
 
+    def add_to_scoresheet(self, dices, score):
+        self.score_sheet.add_score(dices, score)
+
     def add_score(self, score):
         self.score += score
+
+    def get_score(self) -> int:
+        return self.score
 
     def get_unused_dice(self):
         dice_list = []
@@ -48,8 +55,12 @@ class Player:
                 dice_list.append(d)
         return dice_list
 
+    def reset_dice(self):
+        self.dices = [Dice(), Dice(), Dice(), Dice(), Dice(), Dice()]
+        self.sort_dice()
+
     def reset(self):
-        self.score = ScoreSheet()
+        self.score_sheet = ScoreSheet()
         self.dices = [Dice(), Dice(), Dice(), Dice(), Dice(), Dice()]
         self.sort_dice()
 
@@ -59,13 +70,12 @@ class ScoreSheet:
         self.score_list = [0]
         self.dice_list = [[]]
 
-    def add_score(self, player, dices):
-        score = 0
+    def add_score(self, dices, score):
         self.score_list.append(score)
         self.dice_list.append(dices)
 
     def get_score(self):
-        return self.score_list[-1]
+        return sum(self.score_list)
 
 
 class DiceCup:

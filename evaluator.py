@@ -2,6 +2,7 @@ from typing import List
 
 import object_generator
 
+
 def evaluate(dice_list: List[object_generator.Dice], score_sheet: object_generator.ScoreSheet) -> int:
     if not is_all_unused(dice_list):
         raise Exception("Can only evaluate unused dice.")
@@ -44,7 +45,7 @@ def evaluate(dice_list: List[object_generator.Dice], score_sheet: object_generat
             score += get_triple_value(prev_triple_value)
             d.used = True
 
-        if d.value == 1:
+        elif d.value == 1:
             score += 100
             d.used = True
 
@@ -56,17 +57,26 @@ def evaluate(dice_list: List[object_generator.Dice], score_sheet: object_generat
     for d in dice_list:
         if d.used:
             used_dice.append(d)
-    score_sheet.dice_list.append(used_dice)
+
+    #score_sheet.dice_list.append(used_dice)
 
     return score
 
 
 def prev_triple(score_sheet: object_generator.ScoreSheet) -> int:
+    used_num_of_dice = 0
+    for dl in score_sheet.dice_list:
+        used_num_of_dice += len(dl)
+
+    if used_num_of_dice > 0 and used_num_of_dice % 6 == 0:
+        return 0
+
     if len(score_sheet.dice_list) > 0:
         dice_list = score_sheet.dice_list[-1]
         triple_data = is_triple_present(dice_list)
         return triple_data.dice_value
     return 0
+
 def set_all_dice_used(dice_list: List[object_generator.Dice]):
     for d in dice_list:
         d.used = True
